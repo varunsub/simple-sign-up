@@ -26,10 +26,7 @@ function App() {
   ];
   const onSubmit = async (data) => {
     try {
-      console.log("ran");
-      console.log(data);
       let response = await axios.post("http://localhost:4000/api/user", data);
-      console.log(response);
     } catch (e) {
       console.log(e);
     }
