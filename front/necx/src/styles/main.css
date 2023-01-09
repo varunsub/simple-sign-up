@@ -1,0 +1,29 @@
+.error{
+    color:red;
+}
+
+.landing-cont{
+    display:flex;
+    flex-direction: row;
+    width:100%;
+    justify-content: space-evenly;
+}
+
+.login-cont{
+    display:flex;
+    flex-direction: column;
+    border: 2px black solid;
+    padding:10px;
+    border-radius: 10px;
+}
+.login-input{
+    margin:5%  !important;
+}
+
+.swap-buttons{
+    margin:10px !important;
+}
+
+.submit-button{
+    margin:10px;
+}
