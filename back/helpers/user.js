@@ -1,6 +1,9 @@
 const { check } = require("express-validator");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const MS = require("../server");
+const Session = require("../models/Session");
+const jwt = require("jsonwebtoken");
 
 exports.verifyPasswordsMatch = (req, res, next) => {
   const { cpassword } = req.body;
@@ -20,7 +23,11 @@ exports.createUser = async (body) => {
   body.password = await hashPassword(body.password);
   let user = new User(body);
   await user.save();
-  return user;
+  delete user.password;
+  const token = await jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+  let sesh = new Session({ user_id: user._id, token: token });
+  sesh.save();
+  return token;
 };
 
 function hashPassword(password) {
@@ -31,5 +38,35 @@ function hashPassword(password) {
         error ? reject(error) : resolve(hash)
       );
     });
+  });
+}
+
+exports.getAuth = async (token) => {
+  try {
+    let ver = await jwt.verify(token, process.env.JWT_SECRET);
+    let exists = await Session.findOne({ user_id: ver.id, token: token });
+    let user = await User.findOne({ id: ver.id }).lean();
+    if (user) delete user.password;
+    if (exists && user) return user;
+    return false;
+  } catch (e) {
+    return false;
+  }
+};
+
+exports.handleLogin = async (body) => {
+  let user = await User.findOne({ email: body.email });
+  let a = await hashCompare(body.password, user.hash);
+  if (a) {
+    const token = await jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    return token;
+  } else return false;
+};
+
+function hashCompare(password, hash) {
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(password, hash, (error, result) =>
+      error ? reject(error) : resolve(result)
+    );
   });
 }
