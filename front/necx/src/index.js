@@ -1,11 +1,52 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  redirect,
+} from "react-router-dom";
+import Landing from "./Pages/Landing";
+import Home from "./Pages/Home";
+import axios from "axios";
+
+const authChecker = async () => {
+  try {
+    let res = await axios.get("http://localhost:4000/api/user", {
+      withCredentials: true,
+    });
+    return res.data;
+  } catch (e) {
+    return redirect("/");
+  }
+};
+const lChecker = async () => {
+  try {
+    let res = await axios.get("http://localhost:4000/api/user", {
+      withCredentials: true,
+    });
+    return res.data;
+  } catch (e) {
+    return {};
+  }
+};
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Landing />,
+    loader: lChecker,
+  },
+  {
+    path: "home",
+    element: <Home />,
+    loader: authChecker,
+  },
+]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 
