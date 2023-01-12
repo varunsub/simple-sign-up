@@ -47,4 +47,10 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/logout", async (req, res) => {
+  res.clearCookie("access_token");
+  res.status(200);
+  res.end();
+});
+
 module.exports = router;
