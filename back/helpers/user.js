@@ -56,9 +56,11 @@ exports.getAuth = async (token) => {
 
 exports.handleLogin = async (body) => {
   let user = await User.findOne({ email: body.email });
-  let a = await hashCompare(body.password, user.hash);
+  let a = await hashCompare(body.password, user.password);
   if (a) {
     const token = await jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    let sesh = new Session({ user_id: user._id, token: token });
+    await sesh.save();
     return token;
   } else return false;
 };

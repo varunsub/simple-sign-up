@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
 router.post("/login", async (req, res) => {
   let data = await handleLogin(req.body);
   if (data) {
-    res.cookie("access_token", user, { httpOnly: false }).status(200).json({});
+    res.cookie("access_token", data, { httpOnly: false }).status(200).json({});
   } else {
     res.status(400);
     res.end();

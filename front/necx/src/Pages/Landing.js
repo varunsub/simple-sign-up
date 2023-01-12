@@ -79,8 +79,8 @@ function Landing() {
             withCredentials: true,
           }
         );
-        navigate("/home");
         setError("");
+        navigate("/home");
       } catch (e) {
         setError("Invalid username or password");
       }
